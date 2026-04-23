@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify, Response, send_from_
 from flask_cors import CORS
 from multilang_analyzer import MultiLanguageCodeAnalyzer
 from llm_optimizer import LLMOptimizer, CodeGenerator
+from explain_code import CodeExplainer
 import os
 import json
 import time
@@ -9,9 +10,10 @@ import time
 app = Flask(__name__, static_folder='Frontend/static', template_folder='Frontend')
 CORS(app)
 
-# Initialize analyzer, optimizer, and code generator
+# Initialize analyzer, optimizer, code generator, and explainer
 optimizer = LLMOptimizer()
 generator = CodeGenerator()
+explainer = CodeExplainer()
 
 @app.route('/')
 def index():
@@ -967,6 +969,35 @@ def improve_and_complete():
         
     except Exception as e:
         return jsonify({'error': f'Improvement failed: {str(e)}'}), 500
+
+@app.route('/api/explain', methods=['POST'])
+def explain():
+    """Explain code with adaptive learning"""
+    try:
+        data = request.get_json()
+        code = data.get('code', '').strip()
+        language = data.get('language', 'python').lower()
+        skill_level = data.get('skill_level', None)
+        
+        if not code:
+            return jsonify({'error': 'No code provided'}), 400
+        
+        # Get code explanation
+        explanation = explainer.explain_code(code, language, skill_level)
+        
+        return jsonify({
+            'success': True,
+            'explanation': explanation.get('overview', ''),
+            'skill_level': explanation.get('skill_level', 'beginner'),
+            'concept_gaps': explanation.get('concept_gaps', []),
+            'language': language
+        }), 200
+        
+    except Exception as e:
+        return jsonify({
+            'error': f'Explanation failed: {str(e)}',
+            'type': 'explanation_error'
+        }), 500
 
 @app.route('/api/health', methods=['GET'])
 def health():
