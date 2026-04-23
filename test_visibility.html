@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visibility Test</title>
+    <link rel="stylesheet" href="/static/style_new.css">
+    <style>
+        .debug-border {
+            border: 2px solid red !important;
+            margin: 10px !important;
+            padding: 10px !important;
+        }
+        .debug-visible {
+            display: block !important;
+            visibility: visible !important;
+        }
+    </style>
+</head>
+<body>
+    <h1>Visibility Debug Test</h1>
+    
+    <div class="debug-border debug-visible">
+        <h2>Test Section 1: Suggestions</h2>
+        <div id="suggestionsSection" class="debug-border debug-visible">
+            <p>Suggestions section should be visible here</p>
+            <div id="qualitySuggestions" class="debug-border">Quality suggestions</div>
+            <div id="refactoringSuggestions" class="debug-border">Refactoring suggestions</div>
+            <div id="performanceSuggestions" class="debug-border">Performance suggestions</div>
+        </div>
+    </div>
+    
+    <div class="debug-border debug-visible">
+        <h2>Test Section 2: Description Box</h2>
+        <div class="description-section debug-border debug-visible">
+            <label>Description Input:</label>
+            <textarea id="descriptionInput" class="debug-border" placeholder="Test description input"></textarea>
+            <button id="generateBtn" class="debug-border">Generate Code</button>
+        </div>
+    </div>
+    
+    <div class="debug-border debug-visible">
+        <h2>Test Section 3: Analysis</h2>
+        <div class="debug-border debug-visible">
+            <label>Code Input:</label>
+            <textarea id="codeInput" class="debug-border" placeholder="Test code input"></textarea>
+            <button id="analyzeBtn" class="debug-border">Analyze Code</button>
+        </div>
+    </div>
+    
+    <script>
+        // Test if elements exist
+        window.onload = function() {
+            console.log('Testing element visibility...');
+            
+            const elements = ['suggestionsSection', 'qualitySuggestions', 'refactoringSuggestions', 
+                            'performanceSuggestions', 'descriptionInput', 'generateBtn', 'codeInput', 'analyzeBtn'];
+            
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    const style = window.getComputedStyle(element);
+                    console.log(id + ': display=' + style.display + ', visibility=' + style.visibility);
+                } else {
+                    console.log(id + ': NOT FOUND');
+                }
+            });
+        };
+    </script>
+</body>
+</html>

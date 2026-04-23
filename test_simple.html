@@ -1,0 +1,26 @@
+
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Test</title>
+        </head>
+        <body>
+            <div id="testPanel">
+                <h3>Test Panel</h3>
+                <pre id="testContent">Test content here</pre>
+            </div>
+            <script>
+                // Test if we can update this element
+                setTimeout(() => {
+                    const element = document.getElementById('testContent');
+                    if (element) {
+                        element.textContent = 'UPDATED: This should appear in the panel';
+                        console.log('Test: Element updated successfully');
+                    } else {
+                        console.error('Test: Element not found');
+                    }
+                }, 1000);
+            </script>
+        </body>
+        </html>
+        
