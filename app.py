@@ -3,6 +3,7 @@ from flask_cors import CORS
 from multilang_analyzer import MultiLanguageCodeAnalyzer
 from llm_optimizer import LLMOptimizer, CodeGenerator
 from explain_code import CodeExplainer
+from learning_agent import LearningAgent
 import os
 import json
 import time
@@ -10,10 +11,11 @@ import time
 app = Flask(__name__, static_folder='Frontend/static', template_folder='Frontend')
 CORS(app)
 
-# Initialize analyzer, optimizer, code generator, and explainer
+# Initialize analyzer, optimizer, code generator, explainer, and learning agent
 optimizer = LLMOptimizer()
 generator = CodeGenerator()
 explainer = CodeExplainer()
+learning_agent = LearningAgent()
 
 @app.route('/')
 def index():
@@ -997,6 +999,92 @@ def explain():
         return jsonify({
             'error': f'Explanation failed: {str(e)}',
             'type': 'explanation_error'
+        }), 500
+
+@app.route('/api/learning/submit', methods=['POST'])
+def learning_submit():
+    """Submit code for agentic learning feedback"""
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id', 'default_user').strip()
+        code = data.get('code', '').strip()
+        language = data.get('language', 'python').lower()
+        task_id = data.get('task_id')
+        
+        if not code:
+            return jsonify({'error': 'No code provided'}), 400
+        
+        # Process through learning agent
+        result = learning_agent.process_submission(user_id, code, task_id, language)
+        
+        return jsonify(result), 200
+        
+    except Exception as e:
+        return jsonify({
+            'error': f'Learning submission failed: {str(e)}',
+            'type': 'learning_error'
+        }), 500
+
+@app.route('/api/learning/task', methods=['GET'])
+def learning_task():
+    """Get next recommended task"""
+    try:
+        user_id = request.args.get('user_id', 'default_user').strip()
+        
+        result = learning_agent.get_next_task(user_id)
+        
+        return jsonify({'success': True, 'data': result}), 200
+        
+    except Exception as e:
+        return jsonify({
+            'error': f'Task generation failed: {str(e)}',
+            'type': 'task_error'
+        }), 500
+
+@app.route('/api/learning/progress', methods=['GET'])
+def learning_progress():
+    """Get user learning progress"""
+    try:
+        user_id = request.args.get('user_id', 'default_user').strip()
+        
+        progress = learning_agent.get_user_progress(user_id)
+        
+        return jsonify({'success': True, 'data': progress}), 200
+        
+    except Exception as e:
+        return jsonify({
+            'error': f'Progress retrieval failed: {str(e)}',
+            'type': 'progress_error'
+        }), 500
+
+@app.route('/api/learning/path', methods=['GET'])
+def learning_path():
+    """Get personalized learning path"""
+    try:
+        user_id = request.args.get('user_id', 'default_user').strip()
+        
+        path = learning_agent.get_learning_path(user_id)
+        
+        return jsonify({'success': True, 'data': path}), 200
+        
+    except Exception as e:
+        return jsonify({
+            'error': f'Learning path generation failed: {str(e)}',
+            'type': 'path_error'
+        }), 500
+
+@app.route('/api/learning/concept/<concept>', methods=['GET'])
+def learning_concept(concept):
+    """Get details about a specific concept"""
+    try:
+        details = learning_agent.analyze_concept_gap(concept)
+        
+        return jsonify({'success': True, 'data': details}), 200
+        
+    except Exception as e:
+        return jsonify({
+            'error': f'Concept analysis failed: {str(e)}',
+            'type': 'concept_error'
         }), 500
 
 @app.route('/api/health', methods=['GET'])

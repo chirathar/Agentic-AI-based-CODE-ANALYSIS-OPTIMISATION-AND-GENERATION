@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic Learning Dashboard - Code Master</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .skill-level {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 25px;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .level-description {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .code-editor {
+            display: flex;
+            flex-direction: column;
+            height: auto;
+        }
+
+        textarea {
+            width: 100%;
+            height: 250px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 13px;
+            resize: vertical;
+            margin-bottom: 15px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .feedback-section {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .feedback-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .feedback-content {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .score-display {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .score-value {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .score-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        .task-section {
+            background: #f0f7ff;
+            border: 2px solid #667eea;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .task-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .task-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .hints {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .hint-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .hint-list {
+            list-style: none;
+        }
+
+        .hint-list li {
+            padding: 8px 0;
+            color: #666;
+            font-size: 13px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .hint-list li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+        }
+
+        .concepts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .concept-tag {
+            background: #667eea;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .concept-tag.weak {
+            background: #ff6b6b;
+        }
+
+        .concept-tag.strong {
+            background: #51cf66;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: #ffe0e0;
+            color: #c00;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c00;
+        }
+
+        .success-message {
+            background: #e0ffe0;
+            color: #060;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #060;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            color: #666;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Agentic Code Learning Platform</h1>
+            <p class="subtitle">Learn programming with adaptive AI-powered feedback</p>
+        </header>
+
+        <div class="main-grid">
+            <!-- Left Column: Code Submission & Task -->
+            <div>
+                <!-- Task Display -->
+                <div class="card">
+                    <div class="card-title">📝 Today's Learning Task</div>
+                    <div id="taskSection" class="task-section">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            Loading task...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Code Editor -->
+                <div class="card" style="margin-top: 30px;">
+                    <div class="card-title">💻 Write Your Code</div>
+                    
+                    <div class="form-group">
+                        <label>Programming Language</label>
+                        <select id="language">
+                            <option value="python">Python</option>
+                            <option value="javascript">JavaScript</option>
+                            <option value="java">Java</option>
+                            <option value="cpp">C++</option>
+                        </select>
+                    </div>
+
+                    <textarea id="codeInput" placeholder="Write your code here..."></textarea>
+
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="submitCode()">📤 Submit Code</button>
+                        <button class="btn-secondary" onclick="getNewTask()">🔄 Get New Task</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Progress & Results -->
+            <div>
+                <!-- Skill Level -->
+                <div class="card">
+                    <div class="card-title">📊 Your Progress</div>
+                    <div id="progressSection" class="skill-level">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            Loading progress...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback -->
+                <div class="card" style="margin-top: 30px;">
+                    <div class="card-title">💬 Feedback</div>
+                    <div id="feedbackSection">
+                        <p style="color: #999;">Submit code to get personalized feedback</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results & Detailed Analysis -->
+        <div class="card">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('analysis')">Analysis</button>
+                <button class="tab-btn" onclick="switchTab('concepts')">Concepts</button>
+                <button class="tab-btn" onclick="switchTab('learning-path')">Learning Path</button>
+            </div>
+
+            <div id="analysis" class="tab-content active">
+                <div id="analysisContent">
+                    <p style="color: #999;">Submit code to see detailed analysis</p>
+                </div>
+            </div>
+
+            <div id="concepts" class="tab-content">
+                <div id="conceptsContent">
+                    <p style="color: #999;">Concept analysis will appear here</p>
+                </div>
+            </div>
+
+            <div id="learning-path" class="tab-content">
+                <div id="learningPathContent">
+                    <p style="color: #999;">Your personalized learning path will appear here</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUserId = 'user_' + Math.random().toString(36).substr(2, 9);
+        let currentTaskId = null;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProgress();
+            getNewTask();
+        });
+
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function getNewTask() {
+            const taskSection = document.getElementById('taskSection');
+            taskSection.innerHTML = '<div class="loading"><div class="spinner"></div>Loading task...</div>';
+
+            fetch(`/api/learning/task?user_id=${currentUserId}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        const task = data.data.task;
+                        currentTaskId = task.id;
+                        taskSection.innerHTML = `
+                            <div class="task-title">${task.title}</div>
+                            <div class="task-description">${task.description}</div>
+                            <div style="margin: 15px 0;">
+                                <strong>Difficulty:</strong> 
+                                <span style="color: #667eea; font-weight: 600;">${task.skill_level}</span>
+                            </div>
+                            <div style="margin: 15px 0;">
+                                <strong>Concept:</strong>
+                                <span style="background: #e0e0e0; padding: 4px 10px; border-radius: 4px; font-size: 13px;">${task.concept}</span>
+                            </div>
+                            ${task.hints && task.hints.length > 0 ? `
+                                <div class="hints">
+                                    <div class="hint-title">💡 Hints:</div>
+                                    <ul class="hint-list">
+                                        ${task.hints.map(h => `<li>${h}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            ` : ''}
+                            ${task.starter_code ? `
+                                <div style="margin-top: 15px; background: #f5f5f5; padding: 10px; border-radius: 8px; font-family: monospace; font-size: 12px; overflow-x: auto;">
+                                    <strong>Starter Code:</strong>
+                                    <pre>${escapeHtml(task.starter_code)}</pre>
+                                </div>
+                            ` : ''}
+                        `;
+                    }
+                })
+                .catch(err => {
+                    taskSection.innerHTML = `<div class="error-message">Error loading task: ${err.message}</div>`;
+                });
+        }
+
+        function submitCode() {
+            const code = document.getElementById('codeInput').value.trim();
+            const language = document.getElementById('language').value;
+
+            if (!code) {
+                alert('Please write some code first!');
+                return;
+            }
+
+            const feedbackSection = document.getElementById('feedbackSection');
+            feedbackSection.innerHTML = '<div class="loading"><div class="spinner"></div>Analyzing your code...</div>';
+
+            fetch('/api/learning/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: currentUserId,
+                    code: code,
+                    language: language,
+                    task_id: currentTaskId
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    displayFeedback(data);
+                    displayAnalysis(data);
+                    displayConcepts(data);
+                    loadProgress();
+                } else {
+                    feedbackSection.innerHTML = `<div class="error-message">${data.error}</div>`;
+                }
+            })
+            .catch(err => {
+                feedbackSection.innerHTML = `<div class="error-message">Error: ${err.message}</div>`;
+            });
+        }
+
+        function displayFeedback(data) {
+            const feedback = data.feedback;
+            const feedbackSection = document.getElementById('feedbackSection');
+            const score = feedback.overall_score || 0;
+
+            let html = `
+                <div class="score-display">
+                    <div class="score-label">Your Score</div>
+                    <div class="score-value">${Math.round(score)}</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${score}%"></div>
+                    </div>
+                </div>
+                <div class="feedback-section">
+                    <div class="feedback-title">📌 Summary</div>
+                    <div class="feedback-content">${feedback.summary}</div>
+                </div>
+            `;
+
+            if (feedback.feedback_sections) {
+                feedback.feedback_sections.forEach(section => {
+                    html += `
+                        <div class="feedback-section">
+                            <div class="feedback-title">${section.category}</div>
+                            ${section.positive && section.positive.length > 0 ? `
+                                <div style="color: #51cf66; margin-bottom: 10px;">
+                                    ${section.positive.map(p => `✓ ${p}`).join('<br>')}
+                                </div>
+                            ` : ''}
+                            ${section.improvements && section.improvements.length > 0 ? `
+                                <div style="color: #ff6b6b;">
+                                    ${section.improvements.map(i => `⚠ ${i}`).join('<br>')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                });
+            }
+
+            if (feedback.suggestions && feedback.suggestions.length > 0) {
+                html += `
+                    <div class="feedback-section">
+                        <div class="feedback-title">💡 Next Steps</div>
+                        <ul style="margin-left: 20px;">
+                            ${feedback.suggestions.map(s => `<li>${s}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            feedbackSection.innerHTML = html;
+        }
+
+        function displayAnalysis(data) {
+            const analysis = data.analysis;
+            let html = `
+                <div style="margin-bottom: 20px;">
+                    <div style="font-weight: 600; margin-bottom: 15px;">Code Metrics</div>
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <div class="stat-value">${analysis.skill_level}</div>
+                            <div class="stat-label">Detected Level</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value">${(analysis.skill_confidence * 100).toFixed(0)}%</div>
+                            <div class="stat-label">Confidence</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                    <div style="font-weight: 600; margin-bottom: 15px;">Analysis Details</div>
+                    <div style="font-size: 14px;">
+                        <p><strong>Total Lines:</strong> ${analysis.metrics.total_lines || 0}</p>
+                        <p><strong>Functions:</strong> ${analysis.metrics.function_count || 0}</p>
+                        <p><strong>Classes:</strong> ${analysis.metrics.class_count || 0}</p>
+                        <p><strong>Complexity:</strong> ${analysis.metrics.cyclomatic_complexity || 0}</p>
+                    </div>
+                </div>
+            `;
+            document.getElementById('analysisContent').innerHTML = html;
+        }
+
+        function displayConcepts(data) {
+            const conceptData = data.concept_analysis;
+            let html = `
+                <div style="margin-bottom: 20px;">
+                    <div style="font-weight: 600; margin-bottom: 15px;">Found Concepts</div>
+                    <div class="concepts-grid">
+                        ${conceptData.found_concepts.map(c => `<div class="concept-tag strong">${c}</div>`).join('')}
+                    </div>
+                </div>
+            `;
+
+            if (conceptData.missing_concepts && conceptData.missing_concepts.length > 0) {
+                html += `
+                    <div style="margin-bottom: 20px;">
+                        <div style="font-weight: 600; margin-bottom: 15px;">Missing Concepts</div>
+                        <div class="concepts-grid">
+                            ${conceptData.missing_concepts.map(c => `<div class="concept-tag weak">${c}</div>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            if (conceptData.recommendations && conceptData.recommendations.length > 0) {
+                html += `
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                        <div style="font-weight: 600; margin-bottom: 15px;">📚 Learning Recommendations</div>
+                        <ul style="margin-left: 20px;">
+                            ${conceptData.recommendations.map(r => `<li style="margin-bottom: 8px; color: #666;">${r}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+
+            document.getElementById('conceptsContent').innerHTML = html;
+        }
+
+        function loadProgress() {
+            fetch(`/api/learning/progress?user_id=${currentUserId}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        const progress = data.data;
+                        let html = `
+                            <div class="level-badge">${progress.skill_level.toUpperCase()}</div>
+                            <div class="stats-grid">
+                                <div class="stat-box">
+                                    <div class="stat-value">${progress.total_tasks_completed}</div>
+                                    <div class="stat-label">Tasks Completed</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-value">${Math.round(progress.average_score)}</div>
+                                    <div class="stat-label">Average Score</div>
+                                </div>
+                            </div>
+                        `;
+
+                        if (progress.weak_areas && progress.weak_areas.length > 0) {
+                            html += `
+                                <div style="margin-top: 20px;">
+                                    <div style="font-weight: 600; margin-bottom: 10px; color: #ff6b6b;">Focus Areas</div>
+                                    <div class="concepts-grid">
+                                        ${progress.weak_areas.map(w => `<div class="concept-tag weak">${w}</div>`).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        if (progress.strong_areas && progress.strong_areas.length > 0) {
+                            html += `
+                                <div style="margin-top: 20px;">
+                                    <div style="font-weight: 600; margin-bottom: 10px; color: #51cf66;">Strengths</div>
+                                    <div class="concepts-grid">
+                                        ${progress.strong_areas.map(s => `<div class="concept-tag strong">${s}</div>`).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        document.getElementById('progressSection').innerHTML = html;
+                    }
+                });
+
+            // Load learning path
+            fetch(`/api/learning/path?user_id=${currentUserId}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        const path = data.data;
+                        let html = `
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-weight: 600; margin-bottom: 15px;">Your Learning Path</div>
+                                <p style="color: #666; margin-bottom: 15px;">Current Level: <strong>${path.current_level}</strong></p>
+                                <div style="background: #f0f7ff; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                                    ${path.milestones}
+                                </div>
+                            </div>
+                            <div style="font-weight: 600; margin-bottom: 15px;">Recommended Topics</div>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px;">
+                                ${path.recommended_path.slice(0, 6).map((topic, idx) => `
+                                    <div style="background: #667eea; color: white; padding: 15px; border-radius: 8px; text-align: center; font-weight: 600; font-size: 13px;">
+                                        ${idx + 1}. ${topic}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                        document.getElementById('learningPathContent').innerHTML = html;
+                    }
+                });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>
