@@ -3,7 +3,7 @@ from flask_cors import CORS
 from multilang_analyzer import MultiLanguageCodeAnalyzer
 from llm_optimizer import LLMOptimizer, CodeGenerator
 from explain_code import CodeExplainer
-from learning_agent import LearningAgent
+from teaching_agent_ml import TeachingAgentML
 import os
 import json
 import time
@@ -11,11 +11,11 @@ import time
 app = Flask(__name__, static_folder='Frontend/static', template_folder='Frontend')
 CORS(app)
 
-# Initialize analyzer, optimizer, code generator, explainer, and learning agent
+# Initialize analyzer, optimizer, code generator, and teaching agent
 optimizer = LLMOptimizer()
 generator = CodeGenerator()
 explainer = CodeExplainer()
-learning_agent = LearningAgent()
+teaching_agent = TeachingAgentML()
 
 @app.route('/')
 def index():
@@ -1001,39 +1001,41 @@ def explain():
             'type': 'explanation_error'
         }), 500
 
-@app.route('/api/learning/submit', methods=['POST'])
-def learning_submit():
-    """Submit code for agentic learning feedback"""
+@app.route('/teaching', methods=['GET'])
+def teaching_dashboard():
+    """Serve the teaching dashboard"""
+    return render_template('teaching_dashboard_ui.html')
+
+@app.route('/api/teaching/analyze', methods=['POST'])
+def teaching_analyze():
+    """Analyze code and provide ML-based skill assessment"""
     try:
         data = request.get_json()
-        user_id = data.get('user_id', 'default_user').strip()
         code = data.get('code', '').strip()
         language = data.get('language', 'python').lower()
-        task_id = data.get('task_id')
+        user_id = data.get('user_id', 'default_user').strip()
         
         if not code:
             return jsonify({'error': 'No code provided'}), 400
         
-        # Process through learning agent
-        result = learning_agent.process_submission(user_id, code, task_id, language)
-        
+        result = teaching_agent.analyze_code(code, language, user_id)
         return jsonify(result), 200
         
     except Exception as e:
         return jsonify({
-            'error': f'Learning submission failed: {str(e)}',
-            'type': 'learning_error'
+            'error': f'Code analysis failed: {str(e)}',
+            'type': 'analysis_error'
         }), 500
 
-@app.route('/api/learning/task', methods=['GET'])
-def learning_task():
-    """Get next recommended task"""
+@app.route('/api/teaching/task', methods=['GET'])
+def teaching_task():
+    """Get adaptive task based on skill level"""
     try:
         user_id = request.args.get('user_id', 'default_user').strip()
+        difficulty = request.args.get('difficulty', 'beginner')
         
-        result = learning_agent.get_next_task(user_id)
-        
-        return jsonify({'success': True, 'data': result}), 200
+        result = teaching_agent.generate_task(user_id, difficulty)
+        return jsonify(result), 200
         
     except Exception as e:
         return jsonify({
@@ -1041,15 +1043,35 @@ def learning_task():
             'type': 'task_error'
         }), 500
 
-@app.route('/api/learning/progress', methods=['GET'])
-def learning_progress():
-    """Get user learning progress"""
+@app.route('/api/teaching/feedback', methods=['POST'])
+def teaching_feedback():
+    """Get intelligent feedback on submitted code"""
+    try:
+        data = request.get_json()
+        code = data.get('code', '').strip()
+        task_id = data.get('task_id', '').strip()
+        user_id = data.get('user_id', 'default_user').strip()
+        
+        if not code:
+            return jsonify({'error': 'No code provided'}), 400
+        
+        result = teaching_agent.evaluate_submission(code, task_id, user_id)
+        return jsonify(result), 200
+        
+    except Exception as e:
+        return jsonify({
+            'error': f'Feedback generation failed: {str(e)}',
+            'type': 'feedback_error'
+        }), 500
+
+@app.route('/api/teaching/progress', methods=['GET'])
+def teaching_progress():
+    """Get user progress metrics"""
     try:
         user_id = request.args.get('user_id', 'default_user').strip()
         
-        progress = learning_agent.get_user_progress(user_id)
-        
-        return jsonify({'success': True, 'data': progress}), 200
+        result = teaching_agent.get_progress(user_id)
+        return jsonify(result), 200
         
     except Exception as e:
         return jsonify({
@@ -1057,34 +1079,19 @@ def learning_progress():
             'type': 'progress_error'
         }), 500
 
-@app.route('/api/learning/path', methods=['GET'])
-def learning_path():
-    """Get personalized learning path"""
+@app.route('/api/teaching/recommendations', methods=['GET'])
+def teaching_recommendations():
+    """Get personalized learning recommendations"""
     try:
         user_id = request.args.get('user_id', 'default_user').strip()
         
-        path = learning_agent.get_learning_path(user_id)
-        
-        return jsonify({'success': True, 'data': path}), 200
-        
-    except Exception as e:
-        return jsonify({
-            'error': f'Learning path generation failed: {str(e)}',
-            'type': 'path_error'
-        }), 500
-
-@app.route('/api/learning/concept/<concept>', methods=['GET'])
-def learning_concept(concept):
-    """Get details about a specific concept"""
-    try:
-        details = learning_agent.analyze_concept_gap(concept)
-        
-        return jsonify({'success': True, 'data': details}), 200
+        result = teaching_agent.get_recommendations(user_id)
+        return jsonify(result), 200
         
     except Exception as e:
         return jsonify({
-            'error': f'Concept analysis failed: {str(e)}',
-            'type': 'concept_error'
+            'error': f'Recommendations failed: {str(e)}',
+            'type': 'recommendation_error'
         }), 500
 
 @app.route('/api/health', methods=['GET'])
