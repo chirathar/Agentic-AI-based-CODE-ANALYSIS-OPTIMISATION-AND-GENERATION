@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Teaching Agent - Code Learning Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #0f172a;
+            --bg-secondary: #1e293b;
+            --border: #334155;
+            --text: #f1f5f9;
+            --text-muted: #cbd5e1;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg) 0%, #1a1f35 100%);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 0;
+            margin-bottom: 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary) 0%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, #a78bfa 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .skill-badge {
+            padding: 5px 12px;
+            background: var(--primary);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+            transform: translateY(-5px);
+        }
+
+        .card-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .card-value {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .card-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--text);
+        }
+
+        .code-submission {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .code-submission {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .editor-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-header {
+            background: var(--bg);
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .language-select {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        textarea {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            padding: 16px;
+            resize: none;
+            outline: none;
+        }
+
+        textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            padding: 16px;
+            border-top: 1px solid var(--border);
+            background: var(--bg);
+        }
+
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background: var(--text-muted);
+            color: var(--bg);
+        }
+
+        .feedback-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .feedback-section {
+            margin-bottom: 24px;
+        }
+
+        .feedback-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .feedback-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+
+        .concept-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .concept-badge {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .concept-badge.mastered {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .concept-badge.gap {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: var(--danger);
+            color: var(--danger);
+        }
+
+        .skill-meter {
+            margin-top: 12px;
+        }
+
+        .skill-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .learning-path {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .path-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .path-item:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .path-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .path-content {
+            flex: 1;
+        }
+
+        .path-concept {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .path-description {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .path-time {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(99, 102, 241, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            border-left: 4px solid;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border-left-color: var(--success);
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+            border-left-color: var(--danger);
+        }
+
+        .alert-info {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+
+        .modal-body {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">AI Teaching Agent</div>
+            <div class="user-profile">
+                <div class="user-avatar" id="userInitial">U</div>
+                <span id="userName">Student</span>
+                <span class="skill-badge" id="skillLevel">Beginner</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="submissionCount">0</div>
+                <div class="stat-label">Submissions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="masteredCount">0</div>
+                <div class="stat-label">Concepts Mastered</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="gapCount">0</div>
+                <div class="stat-label">Learning Gaps</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="progressPercent">0%</div>
+                <div class="stat-label">Progress</div>
+            </div>
+        </div>
+
+        <!-- Code Submission Section -->
+        <h2 class="section-title">Submit Your Code</h2>
+        <div class="code-submission">
+            <div class="editor-container">
+                <div class="editor-header">
+                    <div class="editor-label">Code Editor</div>
+                    <select class="language-select" id="languageSelect">
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="java">Java</option>
+                        <option value="cpp">C++</option>
+                    </select>
+                </div>
+                <textarea id="codeEditor" placeholder="Paste or write your code here..."></textarea>
+                <div class="button-group">
+                    <button class="btn-primary" id="submitBtn" onclick="submitCode()">Analyze Code</button>
+                    <button class="btn-secondary" onclick="clearCode()">Clear</button>
+                </div>
+            </div>
+
+            <!-- Feedback Section -->
+            <div class="feedback-container">
+                <div id="feedbackContent">
+                    <div style="text-align: center; padding: 40px 20px; color: var(--text-muted);">
+                        <p>Submit your code to get AI-powered feedback</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Learning Path Section -->
+        <h2 class="section-title">Your Learning Path</h2>
+        <div class="learning-path">
+            <div id="learningPathContent">
+                <div style="text-align: center; padding: 40px 20px; color: var(--text-muted);">
+                    <p>Your personalized learning path will appear here after code submission</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modalTitle">Success</div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal()" style="flex: 1;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000';
+        let currentUserId = 'user_' + Math.random().toString(36).substr(2, 9);
+
+        async function submitCode() {
+            const code = document.getElementById('codeEditor').value.trim();
+            const language = document.getElementById('languageSelect').value;
+
+            if (!code) {
+                showAlert('Please enter some code', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('submitBtn');
+            const originalText = btn.textContent;
+            btn.innerHTML = '<span class="loading"></span>';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(`${API_BASE}/api/learning/submit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: currentUserId,
+                        code: code,
+                        language: language
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    displayFeedback(data);
+                    await loadProgress();
+                    await loadLearningPath();
+                    showAlert('Code analyzed successfully!', 'success');
+                } else {
+                    showAlert(data.error || 'Analysis failed', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Failed to submit code: ' + error.message, 'error');
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function displayFeedback(data) {
+            const container = document.getElementById('feedbackContent');
+            const feedback = data.feedback || {};
+
+            let html = '<div>';
+
+            // Skill Level
+            html += `<div class="feedback-section">
+                <div class="feedback-title">Detected Skill Level</div>
+                <div style="font-size: 18px; color: var(--primary); font-weight: bold; margin-top: 8px;">
+                    ${feedback.skill_level || 'Beginner'}
+                </div>
+                <div class="skill-meter">
+                    <div class="skill-label">
+                        <span>Progress</span>
+                        <span>${Math.round((feedback.skill_score || 0) * 100)}%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: ${(feedback.skill_score || 0) * 100}%"></div>
+                    </div>
+                </div>
+            </div>`;
+
+            // Mastered Concepts
+            if (feedback.mastered_concepts && feedback.mastered_concepts.length > 0) {
+                html += `<div class="feedback-section">
+                    <div class="feedback-title">Mastered Concepts</div>
+                    <div class="concept-list">
+                        ${feedback.mastered_concepts.map(c => 
+                            `<span class="concept-badge mastered">${c}</span>`
+                        ).join('')}
+                    </div>
+                </div>`;
+            }
+
+            // Learning Gaps
+            if (feedback.missing_concepts && feedback.missing_concepts.length > 0) {
+                html += `<div class="feedback-section">
+                    <div class="feedback-title">Learning Gaps</div>
+                    <div class="concept-list">
+                        ${feedback.missing_concepts.map(c => 
+                            `<span class="concept-badge gap">${c}</span>`
+                        ).join('')}
+                    </div>
+                </div>`;
+            }
+
+            // General Feedback
+            html += `<div class="feedback-section">
+                <div class="feedback-title">Feedback</div>
+                <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">
+                    ${feedback.message || 'Great code! Keep practicing to improve your skills.'}
+                </p>
+            </div>`;
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        async function loadProgress() {
+            try {
+                const response = await fetch(`${API_BASE}/api/learning/progress?user_id=${currentUserId}`);
+                const data = await response.json();
+
+                if (data.success && data.progress) {
+                    const progress = data.progress;
+                    document.getElementById('skillLevel').textContent = progress.skill_level || 'Beginner';
+                    document.getElementById('submissionCount').textContent = progress.submissions || 0;
+                    document.getElementById('masteredCount').textContent = progress.mastered_concepts ? progress.mastered_concepts.length : 0;
+                }
+            } catch (error) {
+                console.error('Error loading progress:', error);
+            }
+        }
+
+        async function loadLearningPath() {
+            try {
+                const response = await fetch(`${API_BASE}/api/learning/task?user_id=${currentUserId}`);
+                const data = await response.json();
+
+                if (data.success && data.task) {
+                    displayLearningPath(data.task);
+                }
+            } catch (error) {
+                console.error('Error loading learning path:', error);
+            }
+        }
+
+        function displayLearningPath(task) {
+            const container = document.getElementById('learningPathContent');
+            const tasks = task.next_tasks || [];
+
+            if (tasks.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px 20px; color: var(--text-muted);">No tasks available yet</div>';
+                return;
+            }
+
+            let html = '';
+            tasks.forEach((t, i) => {
+                html += `<div class="path-item">
+                    <div class="path-number">${i + 1}</div>
+                    <div class="path-content">
+                        <div class="path-concept">${t.concept || 'Learn new concept'}</div>
+                        <div class="path-description">${t.description || ''}</div>
+                        <div class="path-time">Estimated time: ${t.estimated_time || 30} minutes</div>
+                    </div>
+                </div>`;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function clearCode() {
+            document.getElementById('codeEditor').value = '';
+            document.getElementById('feedbackContent').innerHTML = 
+                '<div style="text-align: center; padding: 40px 20px; color: var(--text-muted);"><p>Submit your code to get AI-powered feedback</p></div>';
+        }
+
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            
+            const container = document.querySelector('main');
+            container.insertBefore(alert, container.firstChild);
+
+            setTimeout(() => alert.remove(), 5000);
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        // Initialize
+        window.addEventListener('load', () => {
+            loadProgress();
+        });
+    </script>
+</body>
+</html>
